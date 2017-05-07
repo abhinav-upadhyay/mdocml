@@ -5,3 +5,6 @@ mandoc
 config.h
 config.log
 Makefile.local
+demandoc
+soelim
+*.old
