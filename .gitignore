@@ -1,0 +1,4 @@
+*.o
+mandoc
+*.a
+*.html
