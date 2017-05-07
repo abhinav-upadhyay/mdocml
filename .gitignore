@@ -2,3 +2,6 @@
 mandoc
 *.a
 *.html
+config.h
+config.log
+Makefile.local
