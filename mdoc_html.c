@@ -975,7 +975,7 @@ mdoc_bd_pre(MDOC_ARGS)
 	    n->norm->Bd.type != DISP_literal)
 		return 1;
 
-	print_otag(h, TAG_PRE, "c", "Li");
+	print_otag(h, TAG_PRE, "c", "prettyprint");
 
 	/* This can be recursive: save & set our literal state. */
 
