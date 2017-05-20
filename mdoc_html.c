@@ -914,7 +914,7 @@ mdoc_d1_pre(MDOC_ARGS)
 	print_otag(h, TAG_DIV, "c", "D1");
 
 	if (n->tok == MDOC_Dl)
-		print_otag(h, TAG_CODE, "c", "Li");
+		print_otag(h, TAG_CODE, "c", "Li prettyprint");
 
 	return 1;
 }
