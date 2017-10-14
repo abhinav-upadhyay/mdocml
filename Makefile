@@ -203,6 +203,13 @@ DISTFILES	 = INSTALL \
 		   $(SRCS) \
 		   $(TESTSRCS)
 
+HEADER_OBJS = mdoc.h \
+			  roff.h \
+			  mandoc.h \
+			  man.h \
+			  mandoc_aux.h
+
+
 LIBMAN_OBJS	 = man.o \
 		   man_macro.o \
 		   man_validate.o
@@ -410,6 +417,7 @@ base-install: mandoc demandoc soelim
 	$(INSTALL_MAN) mandoc_char.7 $(DESTDIR)$(MANDIR)/man7
 	$(INSTALL_MAN) makewhatis.8 \
 		$(DESTDIR)$(MANDIR)/man8/$(BINM_MAKEWHATIS).8
+	cp $(HEADER_OBJS) $(INCLUDEDIR)
 
 lib-install: libmandoc.a
 	mkdir -p $(DESTDIR)$(LIBDIR)

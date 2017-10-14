@@ -186,6 +186,8 @@ print_gen_head(struct html *h)
 	if (h->style)
 		print_otag(h, TAG_LINK, "?h??", "rel", "stylesheet",
 		    h->style, "type", "text/css", "media", "all");
+	printf("%s\n", "<script src=\"https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js\"></script>");
+
 }
 
 static void
