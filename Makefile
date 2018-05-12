@@ -362,7 +362,7 @@ include Makefile.local
 
 all: mandoc demandoc soelim $(BUILD_TARGETS) Makefile.local
 
-install: base-install $(INSTALL_TARGETS)
+install: base-install $(INSTALL_TARGETS) lib-install
 
 www: $(WWW_MANS)
 
