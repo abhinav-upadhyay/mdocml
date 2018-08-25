@@ -7,6 +7,7 @@ LINT_TARGETS	+= missing noarg nobody nosec order
 
 SKIP_GROFF	 = badsec nobody
 SKIP_ASCII	 = badsec
+SKIP_MARKDOWN	?= badsec
 
 # When the section is missing from the man(7) .TH title line,
 # empty parentheses are shown in the page header.

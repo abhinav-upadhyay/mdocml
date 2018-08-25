@@ -8,4 +8,8 @@ LINT_TARGETS	 = noname nostd
 
 SKIP_GROFF	 = nostd
 
+# ugly name section output, do not test this for now
+
+SKIP_MARKDOWN	?= noname
+
 .include <bsd.regress.mk>
