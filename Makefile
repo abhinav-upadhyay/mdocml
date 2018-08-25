@@ -70,7 +70,6 @@ SRCS		 = att.c \
 		   compat_stringlist.c \
 		   compat_strlcat.c \
 		   compat_strlcpy.c \
-		   compat_strndup.c \
 		   compat_strsep.c \
 		   compat_strtonum.c \
 		   compat_vasprintf.c \
