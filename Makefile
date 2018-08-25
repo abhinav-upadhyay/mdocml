@@ -30,7 +30,6 @@ TESTSRCS	 = test-be32toh.c \
 		   test-isblank.c \
 		   test-mkdtemp.c \
 		   test-nanosleep.c \
-		   test-noop.c \
 		   test-ntohl.c \
 		   test-O_DIRECTORY.c \
 		   test-ohash.c \
@@ -47,7 +46,6 @@ TESTSRCS	 = test-be32toh.c \
 		   test-stringlist.c \
 		   test-strlcat.c \
 		   test-strlcpy.c \
-		   test-strndup.c \
 		   test-strptime.c \
 		   test-strsep.c \
 		   test-strtonum.c \
