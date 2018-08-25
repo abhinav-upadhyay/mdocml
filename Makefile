@@ -248,7 +248,6 @@ COMPAT_OBJS	 = compat_err.o \
 		   compat_strcasestr.o \
 		   compat_strlcat.o \
 		   compat_strlcpy.o \
-		   compat_strndup.o \
 		   compat_strsep.o \
 		   compat_strtonum.o \
 		   compat_vasprintf.o
