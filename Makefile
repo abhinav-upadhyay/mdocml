@@ -1,7 +1,7 @@
-# $Id: Makefile,v 1.516 2017/07/20 16:24:53 schwarze Exp $
+# $Id: Makefile,v 1.519 2018/07/31 15:34:00 schwarze Exp $
 #
 # Copyright (c) 2010, 2011, 2012 Kristaps Dzonsons <kristaps@bsd.lv>
-# Copyright (c) 2011, 2013-2017 Ingo Schwarze <schwarze@openbsd.org>
+# Copyright (c) 2011, 2013-2018 Ingo Schwarze <schwarze@openbsd.org>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -15,7 +15,7 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-VERSION = 1.14.3
+VERSION = 1.14.4
 
 # === LIST OF FILES ====================================================
 
@@ -30,6 +30,7 @@ TESTSRCS	 = test-be32toh.c \
 		   test-isblank.c \
 		   test-mkdtemp.c \
 		   test-nanosleep.c \
+		   test-noop.c \
 		   test-ntohl.c \
 		   test-O_DIRECTORY.c \
 		   test-ohash.c \
@@ -46,6 +47,7 @@ TESTSRCS	 = test-be32toh.c \
 		   test-stringlist.c \
 		   test-strlcat.c \
 		   test-strlcpy.c \
+		   test-strndup.c \
 		   test-strptime.c \
 		   test-strsep.c \
 		   test-strtonum.c \
@@ -70,6 +72,7 @@ SRCS		 = att.c \
 		   compat_stringlist.c \
 		   compat_strlcat.c \
 		   compat_strlcpy.c \
+		   compat_strndup.c \
 		   compat_strsep.c \
 		   compat_strtonum.c \
 		   compat_vasprintf.c \
@@ -160,7 +163,6 @@ DISTFILES	 = INSTALL \
 		   libmdoc.h \
 		   libroff.h \
 		   main.h \
-		   makewhatis.8 \
 		   man.1 \
 		   man.7 \
 		   man.cgi.3 \
@@ -202,13 +204,6 @@ DISTFILES	 = INSTALL \
 		   term.h \
 		   $(SRCS) \
 		   $(TESTSRCS)
-
-HEADER_OBJS = mdoc.h \
-			  roff.h \
-			  mandoc.h \
-			  man.h \
-			  mandoc_aux.h
-
 
 LIBMAN_OBJS	 = man.o \
 		   man_macro.o \
@@ -256,6 +251,7 @@ COMPAT_OBJS	 = compat_err.o \
 		   compat_strcasestr.o \
 		   compat_strlcat.o \
 		   compat_strlcpy.o \
+		   compat_strndup.o \
 		   compat_strsep.o \
 		   compat_strtonum.o \
 		   compat_vasprintf.o
@@ -320,8 +316,7 @@ SOELIM_OBJS	 = soelim.o \
 		   compat_reallocarray.o \
 		   compat_stringlist.o
 
-WWW_MANS	 = apropos.1.html \
-		   demandoc.1.html \
+WWW_MANS	=   demandoc.1.html \
 		   man.1.html \
 		   mandoc.1.html \
 		   soelim.1.html \
@@ -344,7 +339,6 @@ WWW_MANS	 = apropos.1.html \
 		   roff.7.html \
 		   tbl.7.html \
 		   catman.8.html \
-		   makewhatis.8.html \
 		   man.cgi.8.html \
 		   man.h.html \
 		   manconf.h.html \
@@ -353,6 +347,13 @@ WWW_MANS	 = apropos.1.html \
 		   mansearch.h.html \
 		   mdoc.h.html \
 		   roff.h.html
+
+HEADER_OBJS = mdoc.h \
+			  roff.h \
+			  mandoc.h \
+			  man.h \
+			  mandoc_aux.h \
+
 
 # === USER CONFIGURATION ===============================================
 
@@ -368,7 +369,7 @@ www: $(WWW_MANS)
 
 $(WWW_MANS): mandoc
 
-.PHONY: base-install cgi-install install www-install lib-install
+.PHONY: base-install cgi-install install www-install
 .PHONY: clean distclean depend
 
 include Makefile.depend
@@ -398,15 +399,9 @@ base-install: mandoc demandoc soelim
 	$(INSTALL_PROGRAM) mandoc demandoc $(DESTDIR)$(BINDIR)
 	$(INSTALL_PROGRAM) soelim $(DESTDIR)$(BINDIR)/$(BINM_SOELIM)
 	cd $(DESTDIR)$(BINDIR) && $(LN) mandoc $(BINM_MAN)
-	cd $(DESTDIR)$(BINDIR) && $(LN) mandoc $(BINM_APROPOS)
-	cd $(DESTDIR)$(BINDIR) && $(LN) mandoc $(BINM_WHATIS)
-	cd $(DESTDIR)$(SBINDIR) && \
-		$(LN) ${BIN_FROM_SBIN}/mandoc $(BINM_MAKEWHATIS)
 	$(INSTALL_MAN) mandoc.1 demandoc.1 $(DESTDIR)$(MANDIR)/man1
 	$(INSTALL_MAN) soelim.1 $(DESTDIR)$(MANDIR)/man1/$(BINM_SOELIM).1
 	$(INSTALL_MAN) man.1 $(DESTDIR)$(MANDIR)/man1/$(BINM_MAN).1
-	$(INSTALL_MAN) apropos.1 $(DESTDIR)$(MANDIR)/man1/$(BINM_APROPOS).1
-	cd $(DESTDIR)$(MANDIR)/man1 && $(LN) $(BINM_APROPOS).1 $(BINM_WHATIS).1
 	$(INSTALL_MAN) man.conf.5 $(DESTDIR)$(MANDIR)/man5/$(MANM_MANCONF).5
 	$(INSTALL_MAN) mandoc.db.5 $(DESTDIR)$(MANDIR)/man5
 	$(INSTALL_MAN) man.7 $(DESTDIR)$(MANDIR)/man7/$(MANM_MAN).7
@@ -415,8 +410,6 @@ base-install: mandoc demandoc soelim
 	$(INSTALL_MAN) eqn.7 $(DESTDIR)$(MANDIR)/man7/$(MANM_EQN).7
 	$(INSTALL_MAN) tbl.7 $(DESTDIR)$(MANDIR)/man7/$(MANM_TBL).7
 	$(INSTALL_MAN) mandoc_char.7 $(DESTDIR)$(MANDIR)/man7
-	$(INSTALL_MAN) makewhatis.8 \
-		$(DESTDIR)$(MANDIR)/man8/$(BINM_MAKEWHATIS).8
 	cp $(HEADER_OBJS) $(INCLUDEDIR)
 
 lib-install: libmandoc.a
@@ -448,15 +441,10 @@ uninstall:
 	rm -f $(DESTDIR)$(BINDIR)/demandoc
 	rm -f $(DESTDIR)$(BINDIR)/$(BINM_SOELIM)
 	rm -f $(DESTDIR)$(BINDIR)/$(BINM_MAN)
-	rm -f $(DESTDIR)$(BINDIR)/$(BINM_APROPOS)
-	rm -f $(DESTDIR)$(BINDIR)/$(BINM_WHATIS)
-	rm -f $(DESTDIR)$(SBINDIR)/$(BINM_MAKEWHATIS)
 	rm -f $(DESTDIR)$(MANDIR)/man1/mandoc.1
 	rm -f $(DESTDIR)$(MANDIR)/man1/demandoc.1
 	rm -f $(DESTDIR)$(MANDIR)/man1/$(BINM_SOELIM).1
 	rm -f $(DESTDIR)$(MANDIR)/man1/$(BINM_MAN).1
-	rm -f $(DESTDIR)$(MANDIR)/man1/$(BINM_APROPOS).1
-	rm -f $(DESTDIR)$(MANDIR)/man1/$(BINM_WHATIS).1
 	rm -f $(DESTDIR)$(MANDIR)/man5/$(MANM_MANCONF).5
 	rm -f $(DESTDIR)$(MANDIR)/man5/mandoc.db.5
 	rm -f $(DESTDIR)$(MANDIR)/man7/$(MANM_MAN).7
@@ -465,7 +453,6 @@ uninstall:
 	rm -f $(DESTDIR)$(MANDIR)/man7/$(MANM_EQN).7
 	rm -f $(DESTDIR)$(MANDIR)/man7/$(MANM_TBL).7
 	rm -f $(DESTDIR)$(MANDIR)/man7/mandoc_char.7
-	rm -f $(DESTDIR)$(MANDIR)/man8/$(BINM_MAKEWHATIS).8
 	rm -f $(DESTDIR)$(CGIBINDIR)/man.cgi
 	rm -f $(DESTDIR)$(HTDOCDIR)/mandoc.css
 	rm -f $(DESTDIR)$(SBINDIR)/mandocd
@@ -552,12 +539,12 @@ regress-distcheck:
 		! -path regress/regress.pl \
 		! -path regress/regress.pl.1
 
-dist: mandoc.sha256
+dist: mandoc-$(VERSION).sha256
 
-mandoc.sha256: mandoc.tar.gz
-	sha256 mandoc.tar.gz > $@
+mandoc-$(VERSION).sha256: mandoc-$(VERSION).tar.gz
+	sha256 mandoc-$(VERSION).tar.gz > $@
 
-mandoc.tar.gz: $(DISTFILES)
+mandoc-$(VERSION).tar.gz: $(DISTFILES)
 	ls regress/*/*/*.mandoc_* && exit 1 || true
 	mkdir -p .dist/mandoc-$(VERSION)/
 	$(INSTALL) -m 0644 $(DISTFILES) .dist/mandoc-$(VERSION)
