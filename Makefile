@@ -364,7 +364,7 @@ www: $(WWW_OBJS) $(WWW_MANS)
 
 $(WWW_MANS): mandoc
 
-.PHONY: base-install cgi-install install www-install
+.PHONY: base-install cgi-install install www-install lib-install
 .PHONY: clean distclean depend
 
 include Makefile.depend
