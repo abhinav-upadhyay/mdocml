@@ -167,13 +167,14 @@ print_gen_head(struct html *h)
 	struct tag	*t;
 
 	print_otag(h, TAG_META, "?", "charset", "utf-8");
+
+	printf("%s\n",  "<script src=\"https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js\"></script>");
+	printf("%s\n",  "<link href=\"https://fonts.googleapis.com/css?family=Roboto+Mono\" rel=\"stylesheet\">");
 	if (h->style != NULL) {
 		print_otag(h, TAG_LINK, "?h??", "rel", "stylesheet",
 		    h->style, "type", "text/css", "media", "all");
 		return;
 	}
-
-	printf("%s\n",  "<script src=\"https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js\"></script>");
 
 	/*
 	 * Print a minimal embedded style sheet.
